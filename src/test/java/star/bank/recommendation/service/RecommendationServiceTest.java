@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import star.bank.recommendation.service.repositories.RecommendationsRepository;
-import star.bank.recommendation.service.service.RecommendationService;
 import star.bank.recommendation.service.service.RecommendationServiceOld;
 
 import java.util.UUID;

@@ -14,13 +14,6 @@ public class RecommendationsRepositoryTest {
     private RecommendationsRepository repository; // Внедряем бин
 
     @Test
-    void testGetRandomTransactionAmount() {
-        int amount = repository.getRandomTransactionAmount(UUID.fromString("1f9b149c-6577-448a-bc94-16bea229b71a"));
-
-        System.out.println(amount);
-    }
-
-    @Test
     void testGetTotalAmountOfTransactions() {
         int amount = repository.getTotalAmountOfTransactions(UUID.fromString("958c44cd-f82c-4d7d-97c5-eb1dc45ce6b5"));
 

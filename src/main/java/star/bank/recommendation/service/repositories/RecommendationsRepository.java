@@ -1,6 +1,7 @@
 package star.bank.recommendation.service.repositories;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -8,18 +9,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class RecommendationsRepository { // без Spring Data JPA тело метода нужно писать самому
+public class RecommendationsRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public RecommendationsRepository(@Qualifier("recommendationsJdbcTemplate") JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public int getRandomTransactionAmount(UUID userId) {
-        Integer result = jdbcTemplate.queryForObject(
-                "SELECT amount FROM transactions t WHERE t.user_id = ? LIMIT 1",
-                Integer.class, userId);
-        return result != null ? result : 0;
     }
 
     public int getTotalAmountOfTransactions(UUID userId) {
@@ -39,6 +33,7 @@ public class RecommendationsRepository { // без Spring Data JPA тело ме
         return result != null ? result : 0;
     }
 
+    @Cacheable(value = "getSumByProductTypeAndTransactionTypeCache", key = "#userId + '_' + #productType + '_' + #transactionType")
     public int getSumByProductTypeAndTransactionType(UUID userId, String productType, String transactionType) {
         String sql = """
                 SELECT SUM(t.amount)
@@ -52,6 +47,7 @@ public class RecommendationsRepository { // без Spring Data JPA тело ме
         return result != null ? result : 0;
     }
 
+    @Cacheable(value = "getCountTransactionsByTypeCache", key = "#userId + '_' + #productType")
     public int getCountTransactionsByType(UUID userId, String productType) {
         String sql = """
                 SELECT COUNT(*)
@@ -63,9 +59,10 @@ public class RecommendationsRepository { // без Spring Data JPA тело ме
         return result != null ? result : 0;
     }
 
+    @Cacheable(value = "hasTransactionsOfTypeCache", key = "#userId + '_' + #productType")
     public boolean hasTransactionsOfType(UUID userId, String productType) {
         String sql = """
-                SELECT t.id
+                SELECT 1
                 FROM transactions t
                 JOIN products p ON t.product_id = p.id
                 WHERE t.user_id = ? AND p.type = ?
@@ -74,5 +71,4 @@ public class RecommendationsRepository { // без Spring Data JPA тело ме
         List<String> ids = jdbcTemplate.queryForList(sql, String.class, userId, productType);
         return !ids.isEmpty();
     }
-
 }
