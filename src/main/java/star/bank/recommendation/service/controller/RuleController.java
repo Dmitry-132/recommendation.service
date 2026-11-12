@@ -5,18 +5,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import star.bank.recommendation.service.model.DynamicRule;
 import star.bank.recommendation.service.model.DynamicRuleDto;
+import star.bank.recommendation.service.service.CacheService;
 import star.bank.recommendation.service.service.DynamicRuleService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/rule")
 public class RuleController {
     private final DynamicRuleService ruleService;
+    private final CacheService cacheService;
 
-    public RuleController(DynamicRuleService ruleService) {
+    public RuleController(DynamicRuleService ruleService, CacheService cacheService) {
         this.ruleService = ruleService;
+        this.cacheService = cacheService;
     }
 
     @GetMapping
@@ -24,10 +28,22 @@ public class RuleController {
         return ResponseEntity.ok(ruleService.getAllRules());
     }
 
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Map<String, Long>>> getStats() {
+        Map<String, Long> stats = ruleService.getRulesStats();
+        return ResponseEntity.ok(Map.of("stats", stats));
+    }
+
     @PostMapping
     public ResponseEntity<DynamicRule> addRule(@RequestBody DynamicRuleDto dto) {
         DynamicRule addedRule = ruleService.addRule(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedRule);
+    }
+
+    @PostMapping("/clear-cache")
+    public ResponseEntity<String> clearCache() {
+        cacheService.clearAllCaches();
+        return ResponseEntity.ok("Кеш успешно очищен");
     }
 
     @DeleteMapping("/delete/{id}")

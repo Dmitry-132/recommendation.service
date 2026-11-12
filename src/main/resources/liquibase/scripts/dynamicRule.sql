@@ -9,3 +9,6 @@ CREATE TABLE dynamic_rule
     rule_condition JSONB        NOT NULL
 -- JSONB - специальный тип PostgreSQL который позволяет хранить JSON-объекты и делать по ним запросы
 );
+
+--changeset ds:2
+ALTER TABLE dynamic_rule ADD COLUMN hit_count BIGINT NOT NULL DEFAULT 0;

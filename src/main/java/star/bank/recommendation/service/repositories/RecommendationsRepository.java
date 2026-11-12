@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import star.bank.recommendation.service.model.UserInfo;
 
 import java.util.List;
 import java.util.UUID;
@@ -71,4 +72,19 @@ public class RecommendationsRepository {
         List<String> ids = jdbcTemplate.queryForList(sql, String.class, userId, productType);
         return !ids.isEmpty();
     }
+
+    public UserInfo findUserByUsername(String username) {
+        String sql = "SELECT id, first_name, last_name FROM users WHERE username = ?";
+        List<UserInfo> users = jdbcTemplate.query(sql, (rs, rowNum) -> new UserInfo(
+                UUID.fromString(rs.getString("id")),
+                rs.getString("first_name") + " " +
+                        rs.getString("last_name")), username);
+        if (users.size() == 1) {
+            return users.get(0);
+        }
+        return null;
+    }
 }
+//rs (ResultSet) — это объект, в котором лежит текущая строка из базы данных. У него есть свои методы
+//rowNum — это номер текущей строки (начиная с 0). здесь он не нужен, но RowMapper требует его в качестве второго параметра (такова сигнатура интерфейса)
+//можно заменить "first_name" на индекс столбца

@@ -37,6 +37,7 @@ public class RecommendationService {
         List<DynamicRule> dynamicRules = dynamicRuleRepository.findAll();
         for (DynamicRule dynamicRule : dynamicRules) {
             if (ruleEngineService.isUserMatchesRule(userId, dynamicRule.getRuleCondition())) {
+                dynamicRuleRepository.incrementHitCount(dynamicRule.getId());
                 recommendations.add(new Recommendation(
                         dynamicRule.getId(),
                         dynamicRule.getName(),

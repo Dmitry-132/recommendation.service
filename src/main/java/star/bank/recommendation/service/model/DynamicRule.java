@@ -23,10 +23,13 @@ public class DynamicRule {
     @JdbcTypeCode(SqlTypes.JSON) // указывает тип для Hibernate
     @Column(name = "rule_condition", nullable = false, columnDefinition = "jsonb") //сырой SQL-тип данных, который Hibernate подставит при генерации таблицы (если у тебя включен ddl-auto), либо который он будет использовать для маппинга.
     //(JSON Binary) хранит данные не как текст, а в бинарном оптимизированном формате
-    private String ruleCondition; // Пока храним как строку JSON
+    private String ruleCondition;
+
+    @Column(name = "hit_count", nullable = false)
+    private Long hitCount = 0L;
 
     @Transient
-    private boolean isNew = true;
+    private boolean isNew = true; //добавил, когда пытался решить проблему с переносом UUID в создаваемые рекомендации. Проверить, можно ли его убрать, так как по итогу просто вписал все нужное в сам метод
 
     public DynamicRule() { //проверить нужны ли? они вроде ток на финал поля или для доп логики
     }
@@ -59,6 +62,8 @@ public class DynamicRule {
         return ruleCondition;
     }
 
+    public Long getHitCount() {return hitCount;}
+
     public void setId(UUID id) {
         this.id = id;
     }
@@ -74,6 +79,8 @@ public class DynamicRule {
     public void setRuleCondition(String ruleCondition) {
         this.ruleCondition = ruleCondition;
     }
+
+    public void setHitCount(Long hitCount) { this.hitCount = hitCount; }
 
     @Override
     public String toString() {

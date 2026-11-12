@@ -6,7 +6,9 @@ import star.bank.recommendation.service.model.DynamicRuleDto;
 import star.bank.recommendation.service.repositories.DynamicRuleRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DynamicRuleService {
@@ -14,6 +16,12 @@ public class DynamicRuleService {
 
     public DynamicRuleService(DynamicRuleRepository repository) {
         this.repository = repository;
+    }
+
+    public Map<String, Long> getRulesStats() {
+        return repository.findAll().stream().collect(Collectors.toMap(
+                rule -> rule.getId().toString(),
+                rule -> rule.getHitCount()));
     }
 
     public DynamicRule addRule(DynamicRuleDto dto) {
