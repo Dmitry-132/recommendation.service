@@ -1,22 +1,17 @@
 package star.bank.recommendation.service.repositories;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public class CompositeRecommendationsRepository { // без Spring Data JPA тело метода нужно писать самому
-    private final JdbcTemplate jdbcTemplate;
+public class CompositeRecommendationsRepository {
     private final RecommendationsRepository recommendationsRepository;
 
-    public CompositeRecommendationsRepository(@Qualifier("recommendationsJdbcTemplate") JdbcTemplate jdbcTemplate, RecommendationsRepository recommendationsRepository) {
-        this.jdbcTemplate = jdbcTemplate;
+    public CompositeRecommendationsRepository(RecommendationsRepository recommendationsRepository) {
         this.recommendationsRepository = recommendationsRepository;
     }
 
-//Если метод с @Cacheable вызывается изнутри другого метода того же класса, кеш не сработает.
     public boolean isActiveUserOf(UUID userId, String productType) {
         int count = recommendationsRepository.getCountTransactionsByType(userId, productType);
         return count >= 5;

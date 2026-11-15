@@ -1,15 +1,11 @@
 package star.bank.recommendation.service.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import star.bank.recommendation.service.model.Recommendation;
 import star.bank.recommendation.service.model.UserInfo;
 import star.bank.recommendation.service.repositories.RecommendationsRepository;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
 public class TelegramBotService {
@@ -35,11 +31,10 @@ public class TelegramBotService {
         } else {
             response.append("Новые продукты для вас:\n\n");
             for (Recommendation rec : recommendations) {
-                response.append("   ").append(rec.getName())
-                        .append(": ").append(rec.getText()).append("\n");
+                response.append("   ").append(rec.name())
+                        .append(": ").append(rec.description()).append("\n");
             }
         }
-
         return response.toString();
     }
 }

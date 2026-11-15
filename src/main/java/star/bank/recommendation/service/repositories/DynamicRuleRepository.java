@@ -10,10 +10,8 @@ import star.bank.recommendation.service.model.DynamicRule;
 import java.util.UUID;
 
 public interface DynamicRuleRepository extends JpaRepository<DynamicRule, UUID> {
-
-    @Modifying  //обозначает запрос как UPDATE/DELETE (по умолчанию все @Query запросы-SELECT)
-    @Transactional //откатит транзакцию в случае сбоя
-    @Query("UPDATE DynamicRule r SET r.hitCount = r.hitCount + 1 WHERE r.id = :id") //@Query использует JPQL. можно использовать '?', но нужно его нумеровать ?1, ?2
+    @Modifying
+    @Transactional
+    @Query("UPDATE DynamicRule r SET r.hitCount = r.hitCount + 1 WHERE r.id = :id")
     void incrementHitCount(@Param("id") UUID id);
 }
-// SQL-триггеры по идее надо пилить на уровне БД, позже это надо будет доучить

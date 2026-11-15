@@ -48,26 +48,18 @@ public class RuleEngineService {
             case "USER_OF":
                 result = repository.hasTransactionsOfType(userId, args.get(0));
                 break;
-
             case "ACTIVE_USER_OF":
                 result = compositeRepository.isActiveUserOf(userId, args.get(0));
                 break;
-
             case "TRANSACTION_SUM_COMPARE":
-                result = compositeRepository.compareTransactionSum(userId, args.get(0), args.get(1), args.get(2),Integer.parseInt(args.get(3)));
+                result = compositeRepository.compareTransactionSum(userId, args.get(0), args.get(1), args.get(2), Integer.parseInt(args.get(3)));
                 break;
-
             case "TRANSACTION_SUM_COMPARE_DEPOSIT_WITHDRAW":
                 result = compositeRepository.compareDepositAndWithdraw(userId, args.get(0), args.get(1));
                 break;
-
             default:
                 throw new IllegalArgumentException("Неизвестный тип запроса " + query);
         }
-
         return negate ? !result : result;
     }
-
-
-
 }

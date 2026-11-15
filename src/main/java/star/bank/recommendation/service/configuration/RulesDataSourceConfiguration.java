@@ -11,8 +11,7 @@ import javax.sql.DataSource;
 public class RulesDataSourceConfiguration {
 
     @Bean
-    @Primary // ставти DataSource по умолчанию
-//    @ConfigurationProperties("spring.datasource") если будет еще бд, или повторить из recommendations
+    @Primary
     public DataSourceProperties rulesDataSourceProperties() {
         return new DataSourceProperties();
     }
@@ -20,8 +19,6 @@ public class RulesDataSourceConfiguration {
     @Bean
     @Primary
     public DataSource rulesDataSource(DataSourceProperties properties) {
-        return properties.initializeDataSourceBuilder().build(); // берет настройки из application.properties (spring.datasource.*)
+        return properties.initializeDataSourceBuilder().build();
     }
-
-
 }

@@ -40,6 +40,12 @@ public class RuleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedRule);
     }
 
+    @PutMapping
+    public ResponseEntity<DynamicRule> updateRule(@RequestBody DynamicRuleDto dto) {
+        DynamicRule updateRule = ruleService.updateRule(dto);
+        return ResponseEntity.ok(updateRule);
+    }
+
     @PostMapping("/clear-cache")
     public ResponseEntity<String> clearCache() {
         cacheService.clearAllCaches();

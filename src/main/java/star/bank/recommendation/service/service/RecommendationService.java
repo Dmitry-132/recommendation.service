@@ -1,5 +1,6 @@
 package star.bank.recommendation.service.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import star.bank.recommendation.service.model.DynamicRule;
 import star.bank.recommendation.service.model.Recommendation;
@@ -15,6 +16,9 @@ import java.util.stream.Collectors;
 @Service
 public class RecommendationService {
 
+    @Value("${staticRulesEnabled:false}")
+    private boolean staticRulesEnabled;
+
     private final List<RecommendationRuleSet> ruleSets;
     private final DynamicRuleRepository dynamicRuleRepository;
     private final RuleEngineService ruleEngineService;
@@ -28,12 +32,14 @@ public class RecommendationService {
     public List<Recommendation> getRecommendationsForUser(UUID userId) {
         List<Recommendation> recommendations =
                 new ArrayList<>();
-//                ruleSets.stream()
-//                .map(rule -> rule.getRecommendation(userId))
-//                .filter(Optional::isPresent)     // уберет пустышки
-//                .map(Optional::get)              // достает Recommendation из Optional
-//                .collect(Collectors.toList());
-
+        if (staticRulesEnabled) {
+            recommendations.addAll(ruleSets.stream()
+                    .map(rule -> rule.getRecommendation(userId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList()
+            );
+        }
         List<DynamicRule> dynamicRules = dynamicRuleRepository.findAll();
         for (DynamicRule dynamicRule : dynamicRules) {
             if (ruleEngineService.isUserMatchesRule(userId, dynamicRule.getRuleCondition())) {

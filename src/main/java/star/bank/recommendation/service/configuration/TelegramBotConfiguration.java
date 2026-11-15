@@ -13,7 +13,7 @@ public class TelegramBotConfiguration {
     private String token;
 
     @Bean
-    @ConditionalOnProperty(name = "telegram.bot.enabled", havingValue = "true", matchIfMissing = false)     //Создаст бин, ТОЛЬКО если telegram.bot.enabled=true. то-же в TelegramBotUpdatesListener
+    @ConditionalOnProperty(name = "telegram.bot.enabled", havingValue = "true", matchIfMissing = false)
     public TelegramBot telegramBot() {
         return new TelegramBot(token);
     }

@@ -12,20 +12,18 @@ import javax.sql.DataSource;
 @Configuration
 public class RecommendationsDataSourceConfiguration {
 
-    @Bean(name = "recommendationsDataSource") //DataSource стандартный интерфейс Java. В нём нет методов для выполнения SQL (типа SELECT), он отвечает только за одно: выдавать соединения (Connection) с базой данных.
+    @Bean(name = "recommendationsDataSource")
     public DataSource recommendationsDataSource(@Value("${application.recommendations-db.url}") String recommendationsUrl) {
-        var dataSource = new HikariDataSource(); //самый быстрый пул соединений в Java (Spring Boot использует его по умолчанию)
-        dataSource.setJdbcUrl(recommendationsUrl); //выбор соединения (URL из properties)
+        var dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(recommendationsUrl);
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setReadOnly(true); //все соединения будут выдаваться только для чтения
+        dataSource.setReadOnly(true);
         return dataSource;
     }
     @Bean(name = "recommendationsJdbcTemplate")
-    public JdbcTemplate recommendationsJdbcTemplate( //JdbcTemplate — это удобная обёртка DataSource
-            @Qualifier("recommendationsDataSource") DataSource dataSource //без @Qualifier, Spring не знал бы, какой именно DataSource
+    public JdbcTemplate recommendationsJdbcTemplate(
+            @Qualifier("recommendationsDataSource") DataSource dataSource
     ) {
         return new JdbcTemplate(dataSource);
     }
 }
-//connection pool HikariCP — это дефолтный connection pool, который используется в Spring Boot.
-//Он сам устанавливает соединение с базой данных и поддерживает эти соединения.

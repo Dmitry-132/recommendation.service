@@ -1,6 +1,7 @@
 package star.bank.recommendation.service.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import star.bank.recommendation.service.model.DynamicRule;
 import star.bank.recommendation.service.model.DynamicRuleDto;
 import star.bank.recommendation.service.repositories.DynamicRuleRepository;
@@ -25,20 +26,37 @@ public class DynamicRuleService {
     }
 
     public DynamicRule addRule(DynamicRuleDto dto) {
+        return saveRule(dto, false);
+    }
+
+    public DynamicRule updateRule(DynamicRuleDto dto) {
+        return saveRule(dto, true);
+    }
+
+    @Transactional
+    private DynamicRule saveRule(DynamicRuleDto dto, boolean isUpdate) {
         DynamicRule rule = new DynamicRule();
-        if (dto.getId() == null) {
+        if (dto.id() == null) {
+            if (isUpdate) {
+                throw new IllegalArgumentException("updateRule: Отсутствует UUID");
+            }
             rule.setId(UUID.randomUUID());
         } else {
             try {
-                rule.setId(UUID.fromString(dto.getId()));
+                rule.setId(UUID.fromString(dto.id()));
             } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("addRule: Неверный формат UUID " + dto.getId());
+                throw new IllegalArgumentException("saveRule: Неверный формат UUID " + dto.id());
             }
         }
-        rule.setName(dto.getName());
-        rule.setDescription(dto.getDescription());
-        rule.setRuleCondition(dto.getRule());
-
+        if (isUpdate && !repository.existsById(rule.getId())) {
+            throw new IllegalArgumentException("Правило с ID " + rule.getId() + " не найдено. Используйте POST для создания.");
+        }
+        if (!isUpdate && repository.existsById(rule.getId())) {
+            throw new IllegalArgumentException("Правило с ID " + rule.getId() + " уже существует. Используйте PUT для обновления.");
+        }
+        rule.setName(dto.name());
+        rule.setDescription(dto.description());
+        rule.setRuleCondition(dto.rule());
         return repository.save(rule);
     }
 
