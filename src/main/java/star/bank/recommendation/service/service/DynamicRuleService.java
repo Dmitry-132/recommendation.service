@@ -25,15 +25,16 @@ public class DynamicRuleService {
                 rule -> rule.getHitCount()));
     }
 
+    @Transactional
     public DynamicRule addRule(DynamicRuleDto dto) {
         return saveRule(dto, false);
     }
 
+    @Transactional
     public DynamicRule updateRule(DynamicRuleDto dto) {
         return saveRule(dto, true);
     }
 
-    @Transactional
     private DynamicRule saveRule(DynamicRuleDto dto, boolean isUpdate) {
         DynamicRule rule = new DynamicRule();
         if (dto.id() == null) {

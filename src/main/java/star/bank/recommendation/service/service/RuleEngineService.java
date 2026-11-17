@@ -1,5 +1,7 @@
 package star.bank.recommendation.service.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import star.bank.recommendation.service.model.RuleCondition;
 import star.bank.recommendation.service.repositories.CompositeRecommendationsRepository;
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Service
 public class RuleEngineService {
+
+    private static final Logger logger = LoggerFactory.getLogger(RuleEngineService.class);
 
     private final RecommendationsRepository repository;
     private final CompositeRecommendationsRepository compositeRepository;
@@ -34,6 +38,7 @@ public class RuleEngineService {
             }
             return true;
         } catch (Exception e) {
+            logger.error("RuleEngineService: Ошибка при парсинге или выполнении правила");
             throw new RuntimeException("Ошибка при парсинге правила: " + ruleJson, e);
         }
     }
